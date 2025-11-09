@@ -10,11 +10,15 @@ import Certificate from './Certificate';
 import RulingFamilies from './RulingFamilies';
 import NationalFigures from './NationalFigures';
 import { THEMES } from '../constants';
-import { SendIcon } from './Icons';
+import { SendIcon, CloseIcon } from './Icons';
 
 type Modal = 'landmarks' | 'quiz' | 'certificate' | 'families' | 'national-figures' | null;
 
-const ChatInterface: React.FC = () => {
+interface ChatInterfaceProps {
+  onClose: () => void;
+}
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onClose }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -93,14 +97,23 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full w-full bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 relative">
-      <header className="bg-white p-4 border-b border-gray-200 flex justify-between items-center z-10">
+      <header className="bg-white p-4 border-b border-gray-200 flex justify-between items-center z-10 flex-shrink-0">
         <h1 className="text-xl font-bold text-red-800">مساعد قيم وولاء</h1>
-        <button 
-          onClick={resetConversation}
-          className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-300"
-        >
-          البداية
-        </button>
+        <div className="flex items-center gap-2">
+            <button 
+              onClick={resetConversation}
+              className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-300"
+            >
+              البداية
+            </button>
+            <button 
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="إغلاق"
+            >
+                <CloseIcon className="w-6 h-6" />
+            </button>
+        </div>
       </header>
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map(msg => (
@@ -116,7 +129,7 @@ const ChatInterface: React.FC = () => {
         {isLoading && <ChatMessage message={{ id: 'loading', text: '...', sender: 'ai' }} />}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 bg-white border-t border-gray-200 z-10">
+      <div className="p-4 bg-white border-t border-gray-200 z-10 flex-shrink-0">
         <form
           onSubmit={(e) => {
             e.preventDefault();
